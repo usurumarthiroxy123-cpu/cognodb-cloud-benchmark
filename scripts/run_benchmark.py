@@ -1,4 +1,7 @@
 import json
+import yaml
+
+from adapters.adapter_factory import get_database_adapter
 
 from benchmarks.benchmark_runner import run_benchmark
 
@@ -11,6 +14,17 @@ from loaders.graph_loader import (
 
 
 
+def load_config():
+
+    with open(
+        "config/config.yaml",
+        "r"
+    ) as file:
+
+        return yaml.safe_load(file)
+
+
+
 if __name__ == "__main__":
 
 
@@ -19,34 +33,39 @@ if __name__ == "__main__":
     )
 
 
+    config = load_config()
+
+
+    database_name = config["database"]["active"]
+
+
     print(
-        "Loading dataset..."
+        f"Active database: {database_name}"
     )
 
 
-    node_load_result = measure_loading(
-        load_nodes,
-        "datasets/nodes.csv"
+    database = get_database_adapter(
+        database_name
     )
 
 
-    relationship_load_result = measure_loading(
-    load_relationships,
-    "datasets/relationships.csv",
-    count_function=lambda graph: sum(
-        len(value)
-        for value in graph.values()
+    print(
+        "\nLoading dataset..."
     )
-)
 
 
     nodes = load_nodes(
-        "datasets/nodes.csv"
+        config["dataset"]["nodes"]
     )
 
 
     graph = load_relationships(
-        "datasets/relationships.csv"
+        config["dataset"]["relationships"]
+    )
+
+
+    print(
+        f"Nodes loaded: {len(nodes)}"
     )
 
 
@@ -57,16 +76,13 @@ if __name__ == "__main__":
 
 
     print(
-        f"Nodes loaded: {len(nodes)}"
-    )
-
-
-    print(
         f"Relationships loaded: {relationships}"
     )
 
 
-    print("\nRunning benchmarks...\n")
+    print(
+        "\nRunning benchmarks...\n"
+    )
 
 
     results = run_benchmark(
@@ -75,27 +91,7 @@ if __name__ == "__main__":
     )
 
 
-    results["data_loading"] = {
-
-        "nodes": node_load_result,
-
-        "relationships": relationship_load_result
-
-    }
-
-
-    for name, result in results.items():
-
-        print(
-            name.upper()
-        )
-
-        print(
-            result
-        )
-
-        print()
-
+    results["database"] = database_name
 
 
     with open(
