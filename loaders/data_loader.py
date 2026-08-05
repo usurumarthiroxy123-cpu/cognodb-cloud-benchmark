@@ -1,6 +1,7 @@
 import json
 
 
-def load_dataset():
-    with open("dataset/sample_data.json", "r") as file:
+def load_dataset(path):
+
+    with open(path, "r") as file:
         return json.load(file)

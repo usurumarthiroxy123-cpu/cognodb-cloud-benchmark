@@ -1,6 +1,6 @@
 {
-    "insert": 3e-06,
-    "read": 3e-06,
-    "query": 3e-06,
+    "insert": 1e-06,
+    "read": 2e-06,
+    "query": 2e-06,
     "update": 2e-06
 }
