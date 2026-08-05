@@ -1,7 +1,7 @@
 {
     "insert_operation": {
         "records_inserted": 3,
-        "time_seconds": 1e-06
+        "time_seconds": 2e-06
     },
     "read_operation": {
         "records_read": 3,
@@ -13,6 +13,6 @@
     },
     "update_operation": {
         "records_updated": 3,
-        "time_seconds": 0.0
+        "time_seconds": 1e-06
     }
 }
