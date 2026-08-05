@@ -164,6 +164,8 @@ cognodb-cloud-benchmark/
 │   └── benchmark_chart.png
 │
 └── requirements.txt
+```
+
 ---
 
 # Environment Configuration
@@ -174,8 +176,11 @@ Create a `.env` file in the project root:
 COGNODB_URI=your_connection_uri
 COGNODB_USERNAME=cognodb
 COGNODB_PASSWORD=your_password_here
+```
 
 Credentials are loaded using environment variables and are not stored in the repository.
+
+---
 
 # Installation
 
@@ -183,20 +188,27 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/usurumarthiroxy123-cpu/cognodb-cloud-benchmark.git
+```
 
 Install dependencies:
 
+```bash
 pip install -r requirements.txt
+```
 
+---
 
 # Running Benchmark
 
 Run benchmark execution:
 
+```bash
 python -m scripts.run_benchmark
+```
 
 Example output:
 
+```text
 ========== CognODB Cloud Benchmark ==========
 
 Active database: cognodb
@@ -209,65 +221,24 @@ Relationships loaded: 149998
 Running benchmarks...
 
 Results saved to results/benchmark_results.json
+```
+
+---
 
 # Generate Reports
 
 Generate CSV report and benchmark chart:
 
+```bash
 python -m scripts.generate_report
+```
 
 Generated files:
 
+```text
 results/
 
 ├── benchmark_results.json
 ├── benchmark_results.csv
 └── benchmark_chart.png
-
-# Benchmark Results
-
-Current CognODB benchmark results:
-
-Operation	p50 latency (ms)	p95 latency (ms)
-1-hop traversal	0.0002	0.0003
-2-hop traversal	0.0003	0.0005
-3-hop traversal	0.0005	0.0006
-Point lookup	0.0001	0.0002
-Filtered lookup	3.3062	5.2547
-Aggregation	5.0969	8.5522
-
-# Methodology
-
-The benchmark follows:
-
-Same dataset format
-Automated execution
-Multiple iterations
-p50 and p95 latency measurements
-Environment-based credentials
-Automated report generation
-
-# Analysis
-
-Performance depends on:
-
-Database architecture
-Query optimization
-Indexing strategy
-Network latency
-Cloud resource limitations
-
-The benchmark provides transparent measurements rather than declaring a single database as the winner.
-
-# Caveats
-Cloud performance may vary due to network conditions.
-Free-tier limitations may affect results.
-Results represent the tested environment.
-Additional database adapters can be added using the existing architecture.
-
-# Future Improvements
-Add more graph database platforms
-Add automated deployment
-Add resource monitoring
-Add larger datasets
-Add advanced concurrency testing
+```
