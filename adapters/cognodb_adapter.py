@@ -1,18 +1,16 @@
-import os
 from neo4j import GraphDatabase
 
 
 class CognoDBAdapter:
 
-    def __init__(self):
-
-        uri = os.getenv("COGNODB_URI")
-        username = "cognodb"
-        password = os.getenv("COGNODB_PASSWORD")
+    def __init__(self, uri, username="cognodb", password=None):
 
         self.driver = GraphDatabase.driver(
             uri,
-            auth=(username, password)
+            auth=(
+                username,
+                password
+            )
         )
 
 
@@ -21,7 +19,11 @@ class CognoDBAdapter:
         self.driver.close()
 
 
-    def execute_query(self, query, parameters=None):
+    def execute_query(
+            self,
+            query,
+            parameters=None
+    ):
 
         with self.driver.session() as session:
 
@@ -55,19 +57,23 @@ class CognoDBAdapter:
                 )
 
 
-    def load_relationships(self, relationships):
+    def load_relationships(
+            self,
+            relationships
+    ):
 
         query = """
         MATCH (a:Node {id:$source}),
               (b:Node {id:$target})
+
         CREATE (a)-[:CONNECTED]->(b)
         """
 
         with self.driver.session() as session:
 
-            for rel in relationships:
+            for relationship in relationships:
 
                 session.run(
                     query,
-                    rel
+                    relationship
                 )
