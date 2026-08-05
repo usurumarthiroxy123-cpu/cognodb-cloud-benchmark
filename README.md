@@ -136,35 +136,39 @@ All benchmark operations use the same dataset format to maintain consistency.
 ---
 
 # Project Structure
+# Project Structure
+
+```
 cognodb-cloud-benchmark/
 
 ├── adapters/
-│ ├── adapter_factory.py
-│ ├── cognodb_adapter.py
-│ └── arangodb_adapter.py
+│   ├── adapter_factory.py
+│   ├── cognodb_adapter.py
+│   └── arangodb_adapter.py
 │
 ├── benchmarks/
-│ └── benchmark_runner.py
+│   └── benchmark_runner.py
 │
 ├── loaders/
-│ └── graph_loader.py
+│   └── graph_loader.py
 │
 ├── metrics/
-│ └── load_metrics.py
+│   └── load_metrics.py
 │
 ├── scripts/
-│ ├── run_benchmark.py
-│ └── generate_report.py
+│   ├── run_benchmark.py
+│   └── generate_report.py
 │
 ├── config/
-│ └── config.yaml
+│   └── config.yaml
 │
 ├── results/
-│ ├── benchmark_results.json
-│ ├── benchmark_results.csv
-│ └── benchmark_chart.png
+│   ├── benchmark_results.json
+│   ├── benchmark_results.csv
+│   └── benchmark_chart.png
 │
 └── requirements.txt
+```
 
 
 ---
