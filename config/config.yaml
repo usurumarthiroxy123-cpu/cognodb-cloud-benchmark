@@ -1,0 +1,8 @@
+benchmark:
+  dataset: dataset/sample_data.json
+
+  operations:
+    - insert
+    - read
+    - query
+    - update
