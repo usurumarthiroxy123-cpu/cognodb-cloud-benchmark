@@ -1,14 +1,9 @@
-import os
 from neo4j import GraphDatabase
 
 
 class Neo4jAdapter:
 
-    def __init__(self):
-
-        uri = os.getenv("NEO4J_URI")
-        username = os.getenv("NEO4J_USERNAME")
-        password = os.getenv("NEO4J_PASSWORD")
+    def __init__(self, uri, username, password):
 
         self.driver = GraphDatabase.driver(
             uri,
