@@ -1,27 +1,40 @@
-class MemoryDatabase:
+from adapters.database_adapter import DatabaseAdapter
+
+
+class MemoryDatabase(DatabaseAdapter):
+    """
+    Simple in-memory database implementation used for benchmarking.
+    """
 
     def __init__(self):
-        self.data = []
-
+        self.records = []
 
     def insert(self, records):
-        self.data.extend(records)
-
+        self.records.extend(records)
+        return len(records)
 
     def read(self):
-        return self.data.copy()
-
+        return self.records.copy()
 
     def query(self):
+        """
+        Example query:
+        Return all records that contain a 'name' field.
+        """
         return [
-            item for item in self.data
-            if "name" in item
+            record
+            for record in self.records
+            if "name" in record
         ]
 
-
     def update(self):
+        """
+        Simulate updating every record.
+        """
+        count = 0
 
-        for item in self.data:
-            item["updated"] = True
+        for record in self.records:
+            record["benchmark_updated"] = True
+            count += 1
 
-        return len(self.data)
+        return count

@@ -1,6 +1,18 @@
 {
-    "insert": 1e-06,
-    "read": 2e-06,
-    "query": 2e-06,
-    "update": 2e-06
+    "insert": {
+        "records": 5,
+        "time_seconds": 1e-06
+    },
+    "read": {
+        "records": 5,
+        "time_seconds": 1e-06
+    },
+    "query": {
+        "matches": 5,
+        "time_seconds": 1e-06
+    },
+    "update": {
+        "records_updated": 5,
+        "time_seconds": 1e-06
+    }
 }

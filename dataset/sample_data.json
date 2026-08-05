@@ -1,14 +1,32 @@
 [
     {
         "id": 1,
-        "name": "Node A"
+        "name": "Alice",
+        "age": 24,
+        "city": "Hyderabad"
     },
     {
         "id": 2,
-        "name": "Node B"
+        "name": "Bob",
+        "age": 27,
+        "city": "Bengaluru"
     },
     {
         "id": 3,
-        "name": "Node C"
+        "name": "Charlie",
+        "age": 30,
+        "city": "Chennai"
+    },
+    {
+        "id": 4,
+        "name": "David",
+        "age": 29,
+        "city": "Pune"
+    },
+    {
+        "id": 5,
+        "name": "Eva",
+        "age": 25,
+        "city": "Mumbai"
     }
 ]

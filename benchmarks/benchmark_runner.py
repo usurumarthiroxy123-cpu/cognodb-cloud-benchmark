@@ -1,32 +1,81 @@
 import time
-from adapters.memory_database import MemoryDatabase
 
 
-def run_benchmark(data):
+def measure_time(function):
+    """
+    Measures execution time of a function.
+    """
 
-    db = MemoryDatabase()
+    start = time.perf_counter()
+
+    result = function()
+
+    end = time.perf_counter()
+
+    return result, round(end - start, 6)
+
+
+def run_benchmark(database, data, operations):
+    """
+    Runs benchmark operations on a database adapter.
+
+    Parameters:
+        database: Database adapter instance
+        data: Dataset records
+        operations: List of operations to execute
+
+    Returns:
+        Dictionary containing benchmark results
+    """
 
     results = {}
 
+    if "insert" in operations:
 
-    start = time.time()
-    db.insert(data)
-    results["insert"] = round(time.time()-start,6)
+        _, execution_time = measure_time(
+            lambda: database.insert(data)
+        )
 
-
-    start = time.time()
-    db.read()
-    results["read"] = round(time.time()-start,6)
-
-
-    start = time.time()
-    db.query()
-    results["query"] = round(time.time()-start,6)
+        results["insert"] = {
+            "records": len(data),
+            "time_seconds": execution_time
+        }
 
 
-    start = time.time()
-    db.update()
-    results["update"] = round(time.time()-start,6)
+    if "read" in operations:
+
+        records, execution_time = measure_time(
+            database.read
+        )
+
+        results["read"] = {
+            "records": len(records),
+            "time_seconds": execution_time
+        }
+
+
+    if "query" in operations:
+
+        records, execution_time = measure_time(
+            database.query
+        )
+
+        results["query"] = {
+            "matches": len(records),
+            "time_seconds": execution_time
+        }
+
+
+    if "update" in operations:
+
+        updated, execution_time = measure_time(
+            database.update
+        )
+
+        results["update"] = {
+            "records_updated": updated,
+            "time_seconds": execution_time
+        }
 
 
     return results
