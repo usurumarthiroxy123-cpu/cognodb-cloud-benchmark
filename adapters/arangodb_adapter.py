@@ -1,22 +1,17 @@
-import os
 from arango import ArangoClient
 
 
 class ArangoDBAdapter:
 
-    def __init__(self):
-
-        host = os.getenv("ARANGODB_URI")
-        username = os.getenv(
-            "ARANGODB_USERNAME",
-            "root"
-        )
-        password = os.getenv(
-            "ARANGODB_PASSWORD"
-        )
+    def __init__(
+            self,
+            uri,
+            username="root",
+            password=""
+    ):
 
         client = ArangoClient(
-            hosts=host
+            hosts=uri
         )
 
         self.db = client.db(
@@ -49,6 +44,12 @@ class ArangoDBAdapter:
             nodes
     ):
 
+        if not self.db.has_collection("nodes"):
+
+            self.db.create_collection(
+                "nodes"
+            )
+
         collection = self.db.collection(
             "nodes"
         )
@@ -64,6 +65,12 @@ class ArangoDBAdapter:
             self,
             relationships
     ):
+
+        if not self.db.has_collection("relationships"):
+
+            self.db.create_collection(
+                "relationships"
+            )
 
         collection = self.db.collection(
             "relationships"
