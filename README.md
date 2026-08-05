@@ -27,9 +27,7 @@ The benchmark focuses on:
 
 # Architecture
 
-Architecture
-------------
-
+```text
 Dataset
    |
    v
@@ -41,16 +39,16 @@ Benchmark Runner
    v
 Database Adapter Layer
    |
-   +-------------------+
-   |                   |
-   v                   v
+   +-----------------------+
+   |                       |
+   v                       v
 Memory Database     CognODB Cloud Database
-                       |
-                       v
-              Metrics Collection
-                       |
-                       v
-          Reports (JSON / CSV / Charts)
+                            |
+                            v
+                   Metrics Collection
+                            |
+                            v
+              Reports (JSON / CSV / Charts)
 
 ---
 
