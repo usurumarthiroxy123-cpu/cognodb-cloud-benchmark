@@ -118,9 +118,10 @@ def run_benchmark(graph, nodes):
     # Mixed Workload
     # -------------------------
 
+    # Mixed workload
+
     results["mixed_workload"] = run_mixed_workload(
-        graph,
-        iterations=BENCHMARK_RUNS
+    graph
     )
 
 
