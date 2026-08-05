@@ -1,8 +1,18 @@
 {
-    "total_records": 3,
-    "records_read": 3,
-    "query_results": 3,
-    "read_time_seconds": 1e-06,
-    "query_time_seconds": 2e-06,
-    "total_execution_time_seconds": 5e-06
+    "insert_operation": {
+        "records_inserted": 3,
+        "time_seconds": 1e-06
+    },
+    "read_operation": {
+        "records_read": 3,
+        "time_seconds": 1e-06
+    },
+    "query_operation": {
+        "matches_found": 3,
+        "time_seconds": 1e-06
+    },
+    "update_operation": {
+        "records_updated": 3,
+        "time_seconds": 0.0
+    }
 }

@@ -1,33 +1,67 @@
 import time
-import json
-import os
 
 
 def run_benchmark(data):
-    start_time = time.time()
 
-    # Simulated graph operations
-    total_records = len(data)
+    results = {}
 
-    # Simulate read operation
-    read_start = time.time()
-    records_read = [item for item in data]
-    read_time = time.time() - read_start
+    # Insert benchmark
+    start = time.time()
 
-    # Simulate query operation
-    query_start = time.time()
-    result = [item for item in data if "name" in item]
-    query_time = time.time() - query_start
+    database = []
 
-    end_time = time.time()
+    for record in data:
+        database.append(record)
 
-    results = {
-        "total_records": total_records,
-        "records_read": len(records_read),
-        "query_results": len(result),
-        "read_time_seconds": round(read_time, 6),
-        "query_time_seconds": round(query_time, 6),
-        "total_execution_time_seconds": round(end_time - start_time, 6)
+    insert_time = time.time() - start
+
+    results["insert_operation"] = {
+        "records_inserted": len(database),
+        "time_seconds": round(insert_time, 6)
     }
+
+
+    # Read benchmark
+    start = time.time()
+
+    records = database.copy()
+
+    read_time = time.time() - start
+
+    results["read_operation"] = {
+        "records_read": len(records),
+        "time_seconds": round(read_time, 6)
+    }
+
+
+    # Query benchmark
+    start = time.time()
+
+    query_result = [
+        record for record in database
+        if "name" in record
+    ]
+
+    query_time = time.time() - start
+
+    results["query_operation"] = {
+        "matches_found": len(query_result),
+        "time_seconds": round(query_time, 6)
+    }
+
+
+    # Update benchmark
+    start = time.time()
+
+    for record in database:
+        record["benchmark"] = True
+
+    update_time = time.time() - start
+
+    results["update_operation"] = {
+        "records_updated": len(database),
+        "time_seconds": round(update_time, 6)
+    }
+
 
     return results
