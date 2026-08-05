@@ -1,14 +1,9 @@
-import os
 from neo4j import GraphDatabase
 
 
 class MemgraphAdapter:
 
-    def __init__(self):
-
-        uri = os.getenv("MEMGRAPH_URI")
-        username = os.getenv("MEMGRAPH_USERNAME", "")
-        password = os.getenv("MEMGRAPH_PASSWORD", "")
+    def __init__(self, uri, username="", password=""):
 
         self.driver = GraphDatabase.driver(
             uri,
