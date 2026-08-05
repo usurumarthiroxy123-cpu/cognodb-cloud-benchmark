@@ -132,6 +132,50 @@ All benchmark operations use the same dataset format to maintain consistency.
 
 ---
 
+# Benchmark Environment
+
+The benchmark was executed under a controlled environment.
+
+Environment details:
+
+| Component | Details |
+|---|---|
+| Language | Python |
+| Database | CognODB Cloud |
+| Dataset Type | Synthetic graph dataset |
+| Nodes | 50,000 |
+| Relationships | 149,998 |
+
+All databases are tested using the same dataset format and benchmark workloads to ensure consistent comparison.
+
+---
+
+# Benchmark Execution Methodology
+
+The benchmark follows:
+
+- Dataset loading before execution
+- Warm-up execution before measurements
+- Multiple benchmark iterations
+- p50 and p95 latency calculation
+- Automated result collection
+- JSON, CSV, and chart report generation
+
+---
+
+# Resource Monitoring
+
+Resource usage depends on the database platform and cloud environment.
+
+The current benchmark focuses on query performance metrics:
+- Latency
+- Throughput
+- Query execution time
+
+Database-specific resource metrics can be added in future versions.
+
+---
+
 # Project Structure
 
 ```text
