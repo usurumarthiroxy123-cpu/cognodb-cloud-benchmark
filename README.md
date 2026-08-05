@@ -49,3 +49,25 @@ benchmark:
     - read
     - query
     - update
+
+## Supported Databases
+
+- Memory Database
+- ArangoDB
+- CognODB
+
+## CognODB Configuration
+
+Create a `.env` file in the project root:
+
+```env
+COGNODB_URI=bolt+s://db-0ba782e6.databases.cognodb.com
+COGNODB_USERNAME=cognodb
+COGNODB_PASSWORD=367413aff3c686f958bcb92bc9b32b3e
+
+## Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/usurumarthiroxy123-cpu/cognodb-cloud-benchmark.git
