@@ -26,32 +26,31 @@ The benchmark focuses on:
 ---
 
 # Architecture
+
+Architecture
+------------
+
 Dataset
-|
-v
+   |
+   v
 Graph Loader
-|
-v
+   |
+   v
 Benchmark Runner
-|
-v
+   |
+   v
 Database Adapter Layer
-|
-+----------------+
-| |
-Memory CognODB
-Database Cloud
-
-|
-v
-
-Metrics Collection
-
-|
-v
-
-Reports
-(JSON / CSV / Charts)
+   |
+   +-------------------+
+   |                   |
+   v                   v
+Memory Database     CognODB Cloud Database
+                       |
+                       v
+              Metrics Collection
+                       |
+                       v
+          Reports (JSON / CSV / Charts)
 
 ---
 
@@ -135,7 +134,6 @@ All benchmark operations use the same dataset format to maintain consistency.
 
 ---
 
-# Project Structure
 # Project Structure
 
 ```
