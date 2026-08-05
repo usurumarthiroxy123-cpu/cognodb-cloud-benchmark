@@ -7,7 +7,7 @@ dataset:
 
 
 database:
-  active: "memory"
+  active: cognodb
 
 
 platforms:
