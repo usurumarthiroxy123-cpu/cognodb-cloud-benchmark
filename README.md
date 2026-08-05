@@ -27,8 +27,6 @@ The benchmark focuses on:
 
 # Architecture
 
-# Architecture
-
 ```text
 Dataset
    |
@@ -135,7 +133,7 @@ All benchmark operations use the same dataset format to maintain consistency.
 
 # Project Structure
 
-```
+```text
 cognodb-cloud-benchmark/
 
 ├── adapters/
@@ -165,9 +163,6 @@ cognodb-cloud-benchmark/
 │   └── benchmark_chart.png
 │
 └── requirements.txt
-```
-
-
 ---
 
 # Environment Configuration
