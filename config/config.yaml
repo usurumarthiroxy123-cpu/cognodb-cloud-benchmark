@@ -1,8 +1,38 @@
 benchmark:
-  dataset: dataset/sample_data.json
+  name: "CognODB Cloud Benchmark"
 
-  operations:
-    - insert
-    - read
-    - query
-    - update
+dataset:
+  nodes: "datasets/nodes.csv"
+  relationships: "datasets/relationships.csv"
+
+
+database:
+  active: "memory"
+
+
+platforms:
+
+  memory:
+    enabled: true
+
+  cognodb:
+    enabled: true
+    uri_env: "COGNODB_URI"
+    username_env: "COGNODB_USERNAME"
+    password_env: "COGNODB_PASSWORD"
+
+  neo4j:
+    enabled: true
+    uri_env: "NEO4J_URI"
+    username_env: "NEO4J_USERNAME"
+    password_env: "NEO4J_PASSWORD"
+
+  memgraph:
+    enabled: true
+    uri_env: "MEMGRAPH_URI"
+
+  arangodb:
+    enabled: true
+    uri_env: "ARANGODB_URI"
+    username_env: "ARANGODB_USERNAME"
+    password_env: "ARANGODB_PASSWORD"
