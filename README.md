@@ -49,9 +49,9 @@ Memory Database     CognODB Cloud Database
                             |
                             v
               Reports (JSON / CSV / Charts)
+```
 
 ---
-
 # Features
 
 ## Graph Workloads
