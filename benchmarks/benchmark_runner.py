@@ -1,81 +1,88 @@
+import json
 import time
 
+from workloads.traversal import (
+    one_hop,
+    two_hop,
+    three_hop,
+    measure_query
+)
 
-def measure_time(function):
-    """
-    Measures execution time of a function.
-    """
+from workloads.lookup import (
+    point_lookup,
+    filtered_lookup,
+    measure_lookup
+)
 
-    start = time.perf_counter()
+from workloads.aggregation import (
+    count_by_property,
+    measure_aggregation
+)
 
-    result = function()
-
-    end = time.perf_counter()
-
-    return result, round(end - start, 6)
+from workloads.mixed import (
+    run_mixed_workload
+)
 
 
-def run_benchmark(database, data, operations):
-    """
-    Runs benchmark operations on a database adapter.
-
-    Parameters:
-        database: Database adapter instance
-        data: Dataset records
-        operations: List of operations to execute
-
-    Returns:
-        Dictionary containing benchmark results
-    """
+def run_benchmark(graph, nodes):
 
     results = {}
 
-    if "insert" in operations:
 
-        _, execution_time = measure_time(
-            lambda: database.insert(data)
-        )
+    # Traversal benchmarks
 
-        results["insert"] = {
-            "records": len(data),
-            "time_seconds": execution_time
-        }
+    results["1_hop"] = measure_query(
+        one_hop,
+        graph,
+        "user_1"
+    )
 
 
-    if "read" in operations:
-
-        records, execution_time = measure_time(
-            database.read
-        )
-
-        results["read"] = {
-            "records": len(records),
-            "time_seconds": execution_time
-        }
+    results["2_hop"] = measure_query(
+        two_hop,
+        graph,
+        "user_1"
+    )
 
 
-    if "query" in operations:
-
-        records, execution_time = measure_time(
-            database.query
-        )
-
-        results["query"] = {
-            "matches": len(records),
-            "time_seconds": execution_time
-        }
+    results["3_hop"] = measure_query(
+        three_hop,
+        graph,
+        "user_1"
+    )
 
 
-    if "update" in operations:
+    # Lookup benchmarks
 
-        updated, execution_time = measure_time(
-            database.update
-        )
+    results["point_lookup"] = measure_lookup(
+        point_lookup,
+        nodes,
+        "user_1"
+    )
 
-        results["update"] = {
-            "records_updated": updated,
-            "time_seconds": execution_time
-        }
+
+    results["filtered_lookup"] = measure_lookup(
+        filtered_lookup,
+        nodes,
+        "type",
+        "person"
+    )
+
+
+    # Aggregation
+
+    results["aggregation"] = measure_aggregation(
+        count_by_property,
+        nodes,
+        "type"
+    )
+
+
+    # Mixed workload
+
+    results["mixed_workload"] = run_mixed_workload(
+        graph
+    )
 
 
     return results

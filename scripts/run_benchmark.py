@@ -1,110 +1,115 @@
-import argparse
 import json
-import os
-import sys
 
-from adapters.memory_database import MemoryDatabase
 from benchmarks.benchmark_runner import run_benchmark
-from loaders.config_loader import load_config
-from loaders.data_loader import load_dataset
-from scripts.logger import setup_logger
 
+from metrics.load_metrics import measure_loading
 
-def main():
-    logger = setup_logger()
+from loaders.graph_loader import (
+    load_nodes,
+    load_relationships
+)
 
-    parser = argparse.ArgumentParser(
-        description="CognODB Cloud Benchmark Framework"
-    )
-
-    parser.add_argument(
-        "--config",
-        default="config/config.yaml",
-        help="Configuration file path"
-    )
-
-    parser.add_argument(
-        "--dataset",
-        default=None,
-        help="Override dataset path"
-    )
-
-    parser.add_argument(
-        "--output",
-        default="results/benchmark_results.json",
-        help="Output JSON file"
-    )
-
-    args = parser.parse_args()
-
-    try:
-        logger.info("Loading configuration...")
-
-        config = load_config(args.config)
-
-        dataset_path = (
-            args.dataset
-            if args.dataset
-            else config["benchmark"]["dataset"]
-        )
-
-        operations = config["benchmark"]["operations"]
-
-        logger.info(f"Loading dataset: {dataset_path}")
-
-        data = load_dataset(dataset_path)
-
-        logger.info(f"Loaded {len(data)} records")
-
-        database = MemoryDatabase()
-
-        logger.info("Running benchmark...")
-
-        results = run_benchmark(
-            database,
-            data,
-            operations
-        )
-
-        os.makedirs(
-            os.path.dirname(args.output),
-            exist_ok=True
-        )
-
-        with open(
-            args.output,
-            "w",
-            encoding="utf-8"
-        ) as file:
-            json.dump(
-                results,
-                file,
-                indent=4
-            )
-
-        print("\n========== CognODB Cloud Benchmark ==========\n")
-
-        for operation, metrics in results.items():
-            print(f"{operation.upper()}")
-
-            for key, value in metrics.items():
-                print(f"  {key}: {value}")
-
-            print()
-
-        print(f"Results saved to: {args.output}")
-
-        logger.info("Benchmark completed successfully.")
-
-    except Exception as error:
-
-        logger.exception(str(error))
-
-        print("\nERROR:")
-        print(error)
-
-        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+
+
+    print(
+        "\n========== CognODB Cloud Benchmark ==========\n"
+    )
+
+
+    print(
+        "Loading dataset..."
+    )
+
+
+    node_load_result = measure_loading(
+        load_nodes,
+        "datasets/nodes.csv"
+    )
+
+
+    relationship_load_result = measure_loading(
+    load_relationships,
+    "datasets/relationships.csv",
+    count_function=lambda graph: sum(
+        len(value)
+        for value in graph.values()
+    )
+)
+
+
+    nodes = load_nodes(
+        "datasets/nodes.csv"
+    )
+
+
+    graph = load_relationships(
+        "datasets/relationships.csv"
+    )
+
+
+    relationships = sum(
+        len(value)
+        for value in graph.values()
+    )
+
+
+    print(
+        f"Nodes loaded: {len(nodes)}"
+    )
+
+
+    print(
+        f"Relationships loaded: {relationships}"
+    )
+
+
+    print("\nRunning benchmarks...\n")
+
+
+    results = run_benchmark(
+        graph,
+        nodes
+    )
+
+
+    results["data_loading"] = {
+
+        "nodes": node_load_result,
+
+        "relationships": relationship_load_result
+
+    }
+
+
+    for name, result in results.items():
+
+        print(
+            name.upper()
+        )
+
+        print(
+            result
+        )
+
+        print()
+
+
+
+    with open(
+        "results/benchmark_results.json",
+        "w"
+    ) as file:
+
+        json.dump(
+            results,
+            file,
+            indent=4
+        )
+
+
+    print(
+        "Results saved to results/benchmark_results.json"
+    )
