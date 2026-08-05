@@ -1,18 +1,6 @@
 {
-    "insert_operation": {
-        "records_inserted": 3,
-        "time_seconds": 1e-06
-    },
-    "read_operation": {
-        "records_read": 3,
-        "time_seconds": 9e-06
-    },
-    "query_operation": {
-        "matches_found": 3,
-        "time_seconds": 1e-06
-    },
-    "update_operation": {
-        "records_updated": 3,
-        "time_seconds": 0.0
-    }
+    "insert": 3e-06,
+    "read": 3e-06,
+    "query": 3e-06,
+    "update": 2e-06
 }
