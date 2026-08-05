@@ -1,7 +1,6 @@
 import os
 
 
-
 def get_database_adapter(database_name):
 
 
@@ -15,11 +14,14 @@ def get_database_adapter(database_name):
 
     elif database_name == "cognodb":
 
-        from adapters.cognodb_adapter import CognODBAdapter
+        from adapters.cognodb_adapter import CognoDBAdapter
 
-        return CognODBAdapter(
+        return CognoDBAdapter(
             os.getenv("COGNODB_URI"),
-            os.getenv("COGNODB_USERNAME"),
+            os.getenv(
+                "COGNODB_USERNAME",
+                "cognodb"
+            ),
             os.getenv("COGNODB_PASSWORD")
         )
 
@@ -42,7 +44,15 @@ def get_database_adapter(database_name):
         from adapters.memgraph_adapter import MemgraphAdapter
 
         return MemgraphAdapter(
-            os.getenv("MEMGRAPH_URI")
+            os.getenv("MEMGRAPH_URI"),
+            os.getenv(
+                "MEMGRAPH_USERNAME",
+                ""
+            ),
+            os.getenv(
+                "MEMGRAPH_PASSWORD",
+                ""
+            )
         )
 
 
@@ -53,8 +63,14 @@ def get_database_adapter(database_name):
 
         return ArangoDBAdapter(
             os.getenv("ARANGODB_URI"),
-            os.getenv("ARANGODB_USERNAME"),
-            os.getenv("ARANGODB_PASSWORD")
+            os.getenv(
+                "ARANGODB_USERNAME",
+                "root"
+            ),
+            os.getenv(
+                "ARANGODB_PASSWORD",
+                ""
+            )
         )
 
 
