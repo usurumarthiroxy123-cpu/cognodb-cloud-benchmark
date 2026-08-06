@@ -7,7 +7,7 @@ dataset:
 
 
 database:
-  active: neo4j
+  active: memgraph
 
 platforms:
 
