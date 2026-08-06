@@ -1,42 +1,52 @@
 import time
 
 
-def point_lookup(nodes, node_id):
+def point_lookup(database, node_id):
 
-    if node_id in nodes:
-        return nodes[node_id]
+    query = """
+    MATCH (n:Node {id:$id})
+    RETURN n
+    """
 
-    return None
+    return database.execute_query(
+        query,
+        {
+            "id": node_id
+        }
+    )
 
 
 
 def filtered_lookup(
-        nodes,
+        database,
         property_name,
         value
 ):
 
-    result = []
+    query = f"""
+    MATCH (n:Node)
+    WHERE n.{property_name} = $value
+    RETURN n
+    """
 
-    for node in nodes.values():
-
-        if node.get(property_name) == value:
-
-            result.append(node)
-
-    return result
+    return database.execute_query(
+        query,
+        {
+            "value": value
+        }
+    )
 
 
 
 def measure_lookup(
         function,
         *args,
-        iterations=100
+        iterations=10
 ):
 
     latencies = []
 
-    result = None
+    result = []
 
 
     for _ in range(iterations):
@@ -46,7 +56,6 @@ def measure_lookup(
         result = function(*args)
 
         end = time.perf_counter()
-
 
         latencies.append(
             (end-start)*1000
@@ -58,27 +67,17 @@ def measure_lookup(
 
     return {
 
-        "matches":
-            len(result)
-            if isinstance(result, list)
-            else 1,
+        "matches": len(result),
 
-        "p50_ms":
-            round(
-                latencies[
-                    int(iterations*0.50)
-                ],
-                4
-            ),
+        "p50_ms": round(
+            latencies[int(iterations*0.5)],
+            4
+        ),
 
-        "p95_ms":
-            round(
-                latencies[
-                    int(iterations*0.95)
-                ],
-                4
-            ),
+        "p95_ms": round(
+            latencies[int(iterations*0.95)-1],
+            4
+        ),
 
-        "iterations":
-            iterations
+        "iterations": iterations
     }

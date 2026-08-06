@@ -7,26 +7,17 @@ class Neo4jAdapter:
 
         self.driver = GraphDatabase.driver(
             uri,
-            auth=(
-                username,
-                password
-            )
+            auth=(username, password)
         )
 
 
     def close(self):
-
         self.driver.close()
 
 
-    def execute_query(
-            self,
-            query,
-            parameters=None
-    ):
+    def execute_query(self, query, parameters=None):
 
         with self.driver.session() as session:
-
             result = session.run(
                 query,
                 parameters or {}
@@ -38,42 +29,102 @@ class Neo4jAdapter:
             ]
 
 
+    def clear_database(self):
+
+        query = """
+        MATCH (n)
+        DETACH DELETE n
+        """
+
+        with self.driver.session() as session:
+            session.run(query)
+
+
+
     def load_nodes(self, nodes):
 
         query = """
-        CREATE (n:Node {
-            id:$id,
-            type:$type
-        })
+
+        UNWIND $nodes AS node
+
+        CREATE (n:Node)
+
+        SET n.id = node.id,
+            n.type = node.type
+
         """
 
-        with self.driver.session() as session:
+        data = []
+
+        if isinstance(nodes, dict):
+
+            for node_id, node_data in nodes.items():
+
+                data.append(
+                    {
+                        "id": str(node_id),
+                        "type": node_data.get("type","User")
+                    }
+                )
+
+        else:
 
             for node in nodes:
 
-                session.run(
-                    query,
-                    node
-                )
+                data.append(node)
 
 
-    def load_relationships(
-            self,
-            relationships
-    ):
+        with self.driver.session() as session:
+
+            session.run(
+                query,
+                {
+                    "nodes": data
+                }
+            ).consume()
+
+
+
+    def load_relationships(self, relationships):
 
         query = """
-        MATCH (a:Node {id:$source}),
-              (b:Node {id:$target})
+
+        UNWIND $rels AS rel
+
+        MATCH (a:Node {id: rel.source})
+
+        MATCH (b:Node {id: rel.target})
 
         CREATE (a)-[:CONNECTED]->(b)
+
         """
 
         with self.driver.session() as session:
 
-            for relationship in relationships:
+            session.run(
+                query,
+                {
+                    "rels": relationships
+                }
+            ).consume()
 
-                session.run(
-                    query,
-                    relationship
-                )
+
+
+    def get(self,node_id):
+
+        query = """
+
+        MATCH (n:Node {id:$id})
+
+        RETURN n
+
+        """
+
+        result = self.execute_query(
+            query,
+            {
+                "id":str(node_id)
+            }
+        )
+
+        return result

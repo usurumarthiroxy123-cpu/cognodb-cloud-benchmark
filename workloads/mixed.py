@@ -1,88 +1,94 @@
+import random
 import time
 from concurrent.futures import ThreadPoolExecutor
 
 
-def execute_read(graph, node_id):
-    """
-    Simulates read operation
-    """
+def execute_read(database, node_id):
 
-    return graph.get(node_id, [])
-
-
-
-def execute_write(graph, node_id, value):
-    """
-    Simulates write operation
+    query = """
+    MATCH (n:Node {id:$id})
+    RETURN n
     """
 
-    graph[node_id] = value
-
-    return True
-
-
-
-def run_mixed_workload(
-        graph,
-        clients=10,
-        operations=100,
-        read_ratio=0.7
-):
-
-    start_time = time.perf_counter()
-
-    completed = 0
+    return database.execute_query(
+        query,
+        {
+            "id": node_id
+        }
+    )
 
 
-    def worker(client_id):
+def worker(database, node_id):
 
-        nonlocal completed
+    start = time.perf_counter()
 
-        for i in range(operations):
+    execute_read(
+        database,
+        node_id
+    )
 
-            node_id = f"user_{i}"
+    end = time.perf_counter()
 
-            if i / operations < read_ratio:
-                execute_read(graph, node_id)
+    return (end-start)*1000
 
-            else:
-                execute_write(
-                    graph,
-                    node_id,
-                    [f"friend_{i}"]
-                )
 
-            completed += 1
+
+def run_mixed_workload(database):
+
+    node_ids = [
+        f"user_{i}"
+        for i in range(100)
+    ]
+
+
+    latencies=[]
 
 
     with ThreadPoolExecutor(
-        max_workers=clients
+        max_workers=10
     ) as executor:
 
-        futures = []
 
-        for client in range(clients):
+        futures=[]
+
+
+        for _ in range(100):
+
+            node_id=random.choice(node_ids)
+
             futures.append(
                 executor.submit(
                     worker,
-                    client
+                    database,
+                    node_id
                 )
             )
 
+
         for future in futures:
-            future.result()
+
+            latencies.append(
+                future.result()
+            )
 
 
-    end_time = time.perf_counter()
-
-    total_time = end_time - start_time
+    latencies.sort()
 
 
     return {
-        "clients": clients,
-        "operations": completed,
-        "queries_per_second": round(
-            completed / total_time,
-            2
-        )
+
+        "operations":len(latencies),
+
+        "p50_ms":
+            round(
+                latencies[50],
+                4
+            ),
+
+        "p95_ms":
+            round(
+                latencies[95],
+                4
+            )
+
     }

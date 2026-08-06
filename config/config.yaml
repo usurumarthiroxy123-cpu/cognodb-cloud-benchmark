@@ -7,8 +7,7 @@ dataset:
 
 
 database:
-  active: cognodb
-
+  active: neo4j
 
 platforms:
 

@@ -1,48 +1,58 @@
 import time
 
 
-def one_hop(graph, start):
+def one_hop(database, start):
 
-    return graph.get(start, [])
+    query = """
+    MATCH (a:Node {id:$id})-[:CONNECTED]->(b)
+    RETURN b.id AS id
+    """
 
-
-
-def two_hop(graph, start):
-
-    result = []
-
-    first_level = graph.get(start, [])
-
-    for node in first_level:
-
-        result.extend(
-            graph.get(node, [])
-        )
-
-    return result
+    return database.execute_query(
+        query,
+        {
+            "id": start
+        }
+    )
 
 
 
-def three_hop(graph, start):
+def two_hop(database, start):
 
-    result = []
+    query = """
+    MATCH (a:Node {id:$id})
+          -[:CONNECTED]->()
+          -[:CONNECTED]->(c)
 
-    first_level = graph.get(start, [])
+    RETURN c.id AS id
+    """
 
-    for node1 in first_level:
+    return database.execute_query(
+        query,
+        {
+            "id": start
+        }
+    )
 
-        second_level = graph.get(
-            node1,
-            []
-        )
 
-        for node2 in second_level:
 
-            result.extend(
-                graph.get(node2, [])
-            )
+def three_hop(database, start):
 
-    return result
+    query = """
+    MATCH (a:Node {id:$id})
+          -[:CONNECTED]->()
+          -[:CONNECTED]->()
+          -[:CONNECTED]->(d)
+
+    RETURN d.id AS id
+    """
+
+    return database.execute_query(
+        query,
+        {
+            "id": start
+        }
+    )
 
 
 

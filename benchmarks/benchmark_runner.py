@@ -24,8 +24,8 @@ from workloads.mixed import (
 
 
 # Benchmark configuration
-WARMUP_RUNS = 10
-BENCHMARK_RUNS = 100
+WARMUP_RUNS = 2
+BENCHMARK_RUNS = 10
 
 
 def execute_warmup(function, *args):
@@ -37,7 +37,31 @@ def execute_warmup(function, *args):
 
 
 
-def run_benchmark(graph, nodes):
+def flatten_relationships(graph):
+    """
+    Convert graph dictionary into relationship records
+    for database loading.
+    """
+
+    relationships = []
+
+    for source, targets in graph.items():
+
+        for target in targets:
+
+            relationships.append(
+                {
+                    "source": source,
+                    "target": target
+                }
+            )
+
+    return relationships
+
+
+
+def run_benchmark(database, graph, nodes):
+    database.clear_database()
 
     results = {
         "benchmark_config": {
@@ -47,81 +71,127 @@ def run_benchmark(graph, nodes):
     }
 
 
+    print("Loading data into database...")
+
+    database.load_nodes(nodes)
+
+    database.load_relationships(
+        flatten_relationships(graph)
+    )
+
+
+    print("Database loading completed")
+
+
     # -------------------------
     # Traversal Benchmarks
     # -------------------------
 
-    execute_warmup(one_hop, graph, "user_1")
+    execute_warmup(
+        one_hop,
+        database,
+        "user_1"
+    )
+
     results["1_hop"] = measure_query(
         one_hop,
-        graph,
+        database,
         "user_1",
         iterations=BENCHMARK_RUNS
     )
 
 
-    execute_warmup(two_hop, graph, "user_1")
+    execute_warmup(
+        two_hop,
+        database,
+        "user_1"
+    )
+
     results["2_hop"] = measure_query(
         two_hop,
-        graph,
+        database,
         "user_1",
         iterations=BENCHMARK_RUNS
     )
 
 
-    execute_warmup(three_hop, graph, "user_1")
+    execute_warmup(
+        three_hop,
+        database,
+        "user_1"
+    )
+
     results["3_hop"] = measure_query(
         three_hop,
-        graph,
+        database,
         "user_1",
         iterations=BENCHMARK_RUNS
     )
+
 
 
     # -------------------------
     # Lookup Benchmarks
     # -------------------------
 
-    execute_warmup(point_lookup, nodes, "user_1")
+    execute_warmup(
+        point_lookup,
+        database,
+        "user_1"
+    )
+
     results["point_lookup"] = measure_lookup(
         point_lookup,
-        nodes,
+        database,
         "user_1",
         iterations=BENCHMARK_RUNS
     )
 
 
-    execute_warmup(filtered_lookup, nodes, "type", "person")
+
+    execute_warmup(
+        filtered_lookup,
+        database,
+        "type",
+        "person"
+    )
+
     results["filtered_lookup"] = measure_lookup(
         filtered_lookup,
-        nodes,
+        database,
         "type",
         "person",
         iterations=BENCHMARK_RUNS
     )
 
 
+
     # -------------------------
     # Aggregation Benchmark
     # -------------------------
 
-    execute_warmup(count_by_property, nodes, "type")
+    execute_warmup(
+        count_by_property,
+        database,
+        "type"
+    )
+
+
     results["aggregation"] = measure_aggregation(
         count_by_property,
-        nodes,
+        database,
         "type",
         iterations=BENCHMARK_RUNS
     )
+
 
 
     # -------------------------
     # Mixed Workload
     # -------------------------
 
-    # Mixed workload
-
     results["mixed_workload"] = run_mixed_workload(
-    graph
+        database
     )
 
 

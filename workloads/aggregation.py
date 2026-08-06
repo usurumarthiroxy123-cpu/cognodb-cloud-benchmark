@@ -1,30 +1,25 @@
 import time
 
 
+
 def count_by_property(
-        nodes,
+        database,
         property_name
 ):
 
-    result = {}
+    query = """
+    MATCH (n:Node)
+    RETURN n[$property] AS property,
+           count(n) AS count
+    """
 
 
-    for node in nodes.values():
-
-        value = node.get(
-            property_name
-        )
-
-
-        if value not in result:
-
-            result[value] = 0
-
-
-        result[value] += 1
-
-
-    return result
+    return database.execute_query(
+        query,
+        {
+            "property": property_name
+        }
+    )
 
 
 
@@ -36,7 +31,7 @@ def measure_aggregation(
 
     latencies = []
 
-    result = None
+    result = []
 
 
     for _ in range(iterations):

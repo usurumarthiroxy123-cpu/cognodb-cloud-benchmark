@@ -1,17 +1,18 @@
 import json
 import yaml
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from adapters.adapter_factory import get_database_adapter
 
 from benchmarks.benchmark_runner import run_benchmark
-
-from metrics.load_metrics import measure_loading
 
 from loaders.graph_loader import (
     load_nodes,
     load_relationships
 )
-
 
 
 def load_config():
@@ -22,7 +23,6 @@ def load_config():
     ) as file:
 
         return yaml.safe_load(file)
-
 
 
 if __name__ == "__main__":
@@ -86,16 +86,22 @@ if __name__ == "__main__":
 
 
     results = run_benchmark(
-        graph,
-        nodes
-    )
+    database,
+    graph,
+    nodes
+)
 
 
+    # Store database name in result file
     results["database"] = database_name
 
 
+    # Save separate result file for each database
+    output_file = f"results/{database_name}_results.json"
+
+
     with open(
-        "results/benchmark_results.json",
+        output_file,
         "w"
     ) as file:
 
@@ -107,5 +113,7 @@ if __name__ == "__main__":
 
 
     print(
-        "Results saved to results/benchmark_results.json"
+        f"Results saved to {output_file}"
     )
+
+database.close()
