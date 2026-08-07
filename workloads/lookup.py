@@ -3,10 +3,23 @@ import time
 
 def point_lookup(database, node_id):
 
-    query = """
-    MATCH (n:Node {id:$id})
-    RETURN n
-    """
+    if database.__class__.__name__ == "ArangoDBAdapter":
+
+        query = """
+        WITH nodes
+
+        FOR n IN nodes
+        FILTER n.id == @id
+        RETURN n
+        """
+
+    else:
+
+        query = """
+        MATCH (n:Node {id:$id})
+        RETURN n
+        """
+
 
     return database.execute_query(
         query,
@@ -23,11 +36,24 @@ def filtered_lookup(
         value
 ):
 
-    query = f"""
-    MATCH (n:Node)
-    WHERE n.{property_name} = $value
-    RETURN n
-    """
+    if database.__class__.__name__ == "ArangoDBAdapter":
+
+        query = f"""
+        WITH nodes
+
+        FOR n IN nodes
+        FILTER n.{property_name} == @value
+        RETURN n.id
+        """
+
+    else:
+
+        query = f"""
+        MATCH (n:Node)
+        WHERE n.{property_name} = $value
+        RETURN n
+        """
+
 
     return database.execute_query(
         query,

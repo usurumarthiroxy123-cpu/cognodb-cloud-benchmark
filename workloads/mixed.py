@@ -5,7 +5,17 @@ from concurrent.futures import ThreadPoolExecutor
 
 def execute_read(database, node_id):
 
-    query = """
+    if database.__class__.__name__ == "ArangoDBAdapter":
+        query = """
+    WITH nodes
+
+    FOR n IN nodes
+    FILTER n.id == @id
+    RETURN n.id
+    """
+
+    else:
+        query = """
     MATCH (n:Node {id:$id})
     RETURN n
     """

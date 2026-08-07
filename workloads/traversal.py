@@ -3,10 +3,22 @@ import time
 
 def one_hop(database, start):
 
-    query = """
-    MATCH (a:Node {id:$id})-[:CONNECTED]->(b)
-    RETURN b.id AS id
-    """
+    if database.__class__.__name__ == "ArangoDBAdapter":
+        query = """
+WITH nodes
+
+FOR v, e IN 1..1 OUTBOUND CONCAT("nodes/", @id)
+relationships
+RETURN v.id
+"""
+
+    else:
+
+        query = """
+        MATCH (a:Node {id:$id})-[:CONNECTED]->(b)
+        RETURN b.id AS id
+        """
+
 
     return database.execute_query(
         query,
@@ -19,13 +31,29 @@ def one_hop(database, start):
 
 def two_hop(database, start):
 
-    query = """
-    MATCH (a:Node {id:$id})
-          -[:CONNECTED]->()
-          -[:CONNECTED]->(c)
+    if database.__class__.__name__ == "ArangoDBAdapter":
 
-    RETURN c.id AS id
-    """
+        query = """
+WITH nodes
+
+FOR v1, e1 IN 1..1 OUTBOUND CONCAT("nodes/", @id)
+relationships
+
+FOR v2, e2 IN 1..1 OUTBOUND v1
+relationships
+
+RETURN v2.id
+"""
+    else:
+
+        query = """
+        MATCH (a:Node {id:$id})
+              -[:CONNECTED]->()
+              -[:CONNECTED]->(c)
+
+        RETURN c.id AS id
+        """
+
 
     return database.execute_query(
         query,
@@ -38,14 +66,34 @@ def two_hop(database, start):
 
 def three_hop(database, start):
 
-    query = """
-    MATCH (a:Node {id:$id})
-          -[:CONNECTED]->()
-          -[:CONNECTED]->()
-          -[:CONNECTED]->(d)
+    if database.__class__.__name__ == "ArangoDBAdapter":
 
-    RETURN d.id AS id
-    """
+        query = """
+WITH nodes
+
+FOR v1, e1 IN 1..1 OUTBOUND CONCAT("nodes/", @id)
+relationships
+
+FOR v2, e2 IN 1..1 OUTBOUND v1
+relationships
+
+FOR v3, e3 IN 1..1 OUTBOUND v2
+relationships
+
+RETURN v3.id
+"""
+
+    else:
+
+        query = """
+        MATCH (a:Node {id:$id})
+              -[:CONNECTED]->()
+              -[:CONNECTED]->()
+              -[:CONNECTED]->(d)
+
+        RETURN d.id AS id
+        """
+
 
     return database.execute_query(
         query,

@@ -39,12 +39,12 @@ The benchmark focuses on:
                             v
                  Database Adapter Layer
                             |
-        +-------------------+-------------------+
-        |                   |                   |
-        v                   v                   v
-   CognODB Cloud          Neo4j          memgraph
-        |                   |                   |
-        +-------------------+-------------------+
+        +-------------------+-------------------+------------------+
+        |                   |                   |                  |
+        v                   v                   v                  v
+   CognODB Cloud          Neo4j          Memgraph              ArangoDB
+        |                   |                   |                  |
+        +-------------------+-------------------+------------------+
                             |
                             v
                         ArangoDB
@@ -238,10 +238,10 @@ Resource usage depends on the database platform.
 
 | Resource | Status |
 |---|---|
-| Instance Type | CognODB Cloud Free Tier |
-| CPU | 0.5 vCPU |
-| Memory | 256 MB RAM |
-| Storage | 1 GB |
+| Instance Type | Free Tier |
+| CPU | Not observable |
+| Memory | Not observable |
+| Storage | Not observable |
 
 Where platform-specific resource metrics are unavailable, they are reported as **Not observable**.
 
@@ -309,9 +309,9 @@ MEMGRAPH_USERNAME=your_username
 MEMGRAPH_PASSWORD=your_password
 
 # ArangoDB (optional)
-ARANGO_URL=your_connection_url
-ARANGO_USERNAME=your_username
-ARANGO_PASSWORD=your_password
+ARANGODB_URI=your_connection_url
+ARANGODB_USERNAME=your_username
+ARANGODB_PASSWORD=your_password
 
 Credentials are loaded using environment variables and are not stored in the repository.
 
@@ -413,6 +413,25 @@ Benchmark configuration:
 
 ---
 
+## ArangoDB Benchmark Results
+
+| Operation | p50 latency (ms) | p95 latency (ms) |
+|---|---:|---:|
+| 1-hop traversal | 262.2422 | 297.0055 |
+| 2-hop traversal | 260.9847 | 328.0479 |
+| 3-hop traversal | 260.3978 | 261.9302 |
+| Point lookup | 271.7235 | 299.2573 |
+| Filtered lookup | 13282.1873 | 13482.2193 |
+| Aggregation | 298.4322 | 396.0989 |
+
+Mixed workload:
+
+| Metric | Value |
+|---|---:|
+| Operations | 100 |
+| p50 latency | 603.1031 ms |
+| p95 latency | 2016.2234 ms |
+
 # Analysis
 
 The benchmark results demonstrate the performance characteristics of different graph workloads under the tested CognODB Cloud environment.
@@ -434,10 +453,11 @@ Benchmark execution generates:
 
 results/
 |-- cognodb_results.json
+|-- neo4j_results.json
 |-- memgraph_results.json
+|-- arangodb_results.json
 |-- benchmark_results.csv
 |-- benchmark_chart.png
-
 
 JSON files contain raw benchmark measurements, CSV files provide tabular results, and charts provide visual comparison of workloads.
 

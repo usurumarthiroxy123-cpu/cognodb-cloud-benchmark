@@ -29,6 +29,8 @@ platforms:
   memgraph:
     enabled: true
     uri_env: "MEMGRAPH_URI"
+    username_env: "MEMGRAPH_USERNAME"
+    password_env: "MEMGRAPH_PASSWORD"
 
   arangodb:
     enabled: true
