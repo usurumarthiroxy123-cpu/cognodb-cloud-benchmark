@@ -28,24 +28,30 @@ The benchmark focuses on:
 # Architecture
 
 ```text
-Dataset
-   |
-   v
-Graph Loader
-   |
-   v
-Benchmark Runner
-   |
-   v
-Database Adapter Layer
-   |
-   +-----------------------+
-   |                       |
-   v                       v
-Memory Database     CognODB Cloud Database
+                         Dataset
                             |
                             v
-                   Metrics Collection
+                    Graph Data Loader
+                            |
+                            v
+                    Benchmark Runner
+                            |
+                            v
+                 Database Adapter Layer
+                            |
+        +-------------------+-------------------+
+        |                   |                   |
+        v                   v                   v
+   CognODB Cloud          Neo4j          memgraph
+        |                   |                   |
+        +-------------------+-------------------+
+                            |
+                            v
+                        ArangoDB
+
+                            |
+                            v
+                  Metrics Collection
                             |
                             v
               Reports (JSON / CSV / Charts)
@@ -112,8 +118,10 @@ The framework currently supports the following database adapters:
 | Database | Adapter Status |
 |---|---|
 | Memory Database | Supported |
-| ArangoDB | Supported |
 | CognODB Cloud | Supported |
+| Neo4j | Supported |
+| Memgraph | Supported |
+| ArangoDB | Supported |
 
 The adapter-based architecture allows additional graph database platforms to be integrated without changing the benchmark execution logic.
 
@@ -148,7 +156,9 @@ The benchmark loads the same dataset into each supported database using the corr
 | Database | Load Method |
 |---|---|
 | Memory Database | In-memory Python graph construction |
-| CognODB Cloud | Neo4j Bolt driver using batched Cypher inserts |
+| CognODB Cloud | Batched graph inserts |
+| Neo4j | Neo4j Bolt driver using batched Cypher inserts |
+| Memgraph | Neo4j Bolt driver using batched Cypher inserts |
 | ArangoDB | Python ArangoDB driver |
 
 All benchmark executions use the identical dataset format to ensure consistency across supported databases.
@@ -186,6 +196,28 @@ The benchmark follows:
 
 ---
 
+# Benchmark Workloads
+
+The benchmark evaluates the following graph operations:
+
+| Workload | Description |
+|---|---|
+| 1-hop Traversal | Finds directly connected nodes |
+| 2-hop Traversal | Traverses two relationship levels |
+| 3-hop Traversal | Traverses deeper graph relationships |
+| Point Lookup | Retrieves a node using identifier lookup |
+| Filtered Lookup | Retrieves nodes based on properties |
+| Aggregation | Performs graph counting and aggregation operations |
+| Mixed Workload | Executes multiple operations under concurrent load |
+
+Metrics collected:
+
+- p50 latency
+- p95 latency
+- Query throughput (QPS)
+- Data loading performance
+
+---
 
 # Indexed Properties
 
@@ -220,46 +252,66 @@ Where platform-specific resource metrics are unavailable, they are reported as *
 ```text
 cognodb-cloud-benchmark/
 
-├── adapters/
-│   ├── adapter_factory.py
-│   ├── cognodb_adapter.py
-│   └── arangodb_adapter.py
-│
-├── benchmarks/
-│   └── benchmark_runner.py
-│
-├── loaders/
-│   └── graph_loader.py
-│
-├── metrics/
-│   └── load_metrics.py
-│
-├── scripts/
-│   ├── run_benchmark.py
-│   └── generate_report.py
-│
-├── config/
-│   └── config.yaml
-│
-├── results/
-│   ├── benchmark_results.json
-│   ├── benchmark_results.csv
-│   └── benchmark_chart.png
-│
-└── requirements.txt
+|-- adapters/
+|   |-- adapter_factory.py
+|   |-- cognodb_adapter.py
+|   |-- neo4j_adapter.py
+|   |-- memgraph_adapter.py
+|   |-- arangodb_adapter.py
+|
+|-- benchmarks/
+|   |-- benchmark_runner.py
+|
+|-- loaders/
+|   |-- graph_loader.py
+|
+|-- metrics/
+|   |-- load_metrics.py
+|
+|-- scripts/
+|   |-- run_benchmark.py
+|   |-- generate_report.py
+|
+|-- config/
+|   |-- config.yaml
+|
+|-- datasets/
+|   |-- nodes.csv
+|   |-- relationships.csv
+|
+|-- results/
+|   |-- benchmark_results.json
+|   |-- benchmark_results.csv
+|   |-- benchmark_chart.png
+|
+|-- requirements.txt
+|-- README.md
 ```
-
 ---
 
 # Environment Configuration
 
 Create a `.env` file in the project root:
 
-```env
+# CognODB
 COGNODB_URI=your_connection_uri
-COGNODB_USERNAME=cognodb
-COGNODB_PASSWORD=your_password_here
-```
+COGNODB_USERNAME=your_username
+COGNODB_PASSWORD=your_password
+
+# Neo4j (optional)
+NEO4J_URI=your_connection_uri
+NEO4J_USERNAME=your_username
+NEO4J_PASSWORD=your_password
+
+# Memgraph (optional)
+MEMGRAPH_URI=your_connection_uri
+MEMGRAPH_USERNAME=your_username
+MEMGRAPH_PASSWORD=your_password
+
+# ArangoDB (optional)
+ARANGO_URL=your_connection_url
+ARANGO_USERNAME=your_username
+ARANGO_PASSWORD=your_password
 
 Credentials are loaded using environment variables and are not stored in the repository.
 
@@ -335,6 +387,8 @@ results/
 
 # Benchmark Results
 
+Results are generated from automated benchmark runs using the common dataset and workload configuration.
+
 Current CognODB benchmark results:
 
 | Operation | p50 latency (ms) | p95 latency (ms) |
@@ -371,6 +425,21 @@ The benchmark results demonstrate the performance characteristics of different g
 
 The benchmark focuses on reproducible measurement and transparent reporting. The results should be interpreted within the tested environment and configuration rather than as a universal ranking of graph databases.
 
+
+---
+
+# Results Output
+
+Benchmark execution generates:
+
+results/
+|-- cognodb_results.json
+|-- memgraph_results.json
+|-- benchmark_results.csv
+|-- benchmark_chart.png
+
+
+JSON files contain raw benchmark measurements, CSV files provide tabular results, and charts provide visual comparison of workloads.
 
 ---
 
