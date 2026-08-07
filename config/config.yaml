@@ -7,7 +7,7 @@ dataset:
 
 
 database:
-  active: memgraph
+  active: arangodb
 
 platforms:
 

@@ -115,5 +115,4 @@ if __name__ == "__main__":
     print(
         f"Results saved to {output_file}"
     )
-
-database.close()
+    database.close()
